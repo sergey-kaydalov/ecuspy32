@@ -127,6 +127,9 @@ general ones. Authorization things (like authBasic) act as a 'barrier' and
 should be placed above the URLs they protect.
 */
 HttpdBuiltInUrl builtInUrls[]={
+	ROUTE_REDIRECT("/", "/index.html"),
+	ROUTE_CGI("/config.json", cgiGetConfigJson),
+#if 0
 	ROUTE_CGI_ARG("*", cgiRedirectApClientToHostname, "esp8266.nonet"),
 	ROUTE_REDIRECT("/", "/index.tpl"),
 
@@ -159,7 +162,7 @@ HttpdBuiltInUrl builtInUrls[]={
 	ROUTE_REDIRECT("/test", "/test/index.html"),
 	ROUTE_REDIRECT("/test", "/test/index.html"),
 	ROUTE_CGI("/test/test.cgi", cgiTestbed),
-
+#endif
 	ROUTE_FILESYSTEM(),
 
 	ROUTE_END()
@@ -262,8 +265,8 @@ void ICACHE_FLASH_ATTR init_wifi(bool modeAP) {
 		//Connect to the defined access point.
 		wifi_config_t config;
 		memset(&config, 0, sizeof(config));
-		sprintf((char*)config.sta.ssid, "RouterSSID");			// @TODO: Changeme
-		sprintf((char*)config.sta.password, "RouterPassword"); 	// @TODO: Changeme
+		sprintf((char*)config.sta.ssid, "everest36");			// @TODO: Changeme
+		sprintf((char*)config.sta.password, "mb90f497"); 	// @TODO: Changeme
 		esp_wifi_set_config(WIFI_IF_STA, &config);
 		esp_wifi_connect();
 	}
@@ -292,7 +295,7 @@ void user_init(void) {
 	tcpip_adapter_init();
 	httpdInit(builtInUrls, 80, HTTPD_FLAG_NONE);
 
-	init_wifi(true); // Supply false for STA mode
+	init_wifi(false); // Supply false for STA mode
 
 	xTaskCreate(websocketBcast, "wsbcast", 3000, NULL, 3, NULL);
 

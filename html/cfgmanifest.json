@@ -1,0 +1,58 @@
+[
+		{
+			"name": "Network",
+			"desc": "Network settings",
+			"options": [
+			{
+				"name": "IP",
+				"desc": "IP Address",
+				"id": "srvip",
+				"type": "input"
+			},
+			{
+				"name": "Mask",
+				"desc": "Sub-network mask",
+				"id": "srvmask",
+				"type": "input"
+			},
+			{
+				"name": "SSID",
+				"desc": "Access Point SSID",
+				"id": "apssid",
+				"type": "input"
+			},
+			{
+				"name": "PWD",
+				"desc": "Remote SSID passowrd",
+				"id": "appwd",
+				"type": "input"
+			}
+			]
+		},
+		{
+			"name": "Adapter",
+			"desc": "ELM327 adapter configuration",
+			"options": [
+				{
+					"name": "Adaptre type",
+					"desc": "ELM327 adapter type",
+					"id": "elmtype",
+					"type": "select",
+					"options": ["Bluetooth", "WIFI"]
+				},
+				{
+					"name": "Echo",
+					"desc": "ELM327 echo",
+					"id": "elmecho",
+					"type": "select",
+					"options": ["ON", "OFF"]
+				}
+			]
+		},
+		{
+			"name": "FW Update",
+			"id": 4,
+			"url": "/fwupdate.cgi",
+			"options": []
+		}
+]

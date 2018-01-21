@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ECUSpy32 configuration interface">
+    <title>ECUSpy32 ELM327 BT/WIFI UI gadget</title>
+    
+    <link rel="stylesheet" href="css/pure-min.css" integrity="sha384-" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/ecuspy.css">
+    <script src="js/moon.js"></script>   
+</head>
+<body>
+	<div id="main">
+		<div id="header">
+ 			<img id="logo" src="img/logo.png"/>
+			<span>{{counter}}</span>
+ 		</div>
+		<div id="nav">
+			<div class="pure-menu custom-restricted-width">
+    				<span class="pure-menu-heading mf"><b>Settings</b><hr></span>
+
+    				<ul class="pure-menu-list" m-for="item,index in cfg">
+        				<li class="pure-menu-item"><a href="#" m-on:click="setActive(index)" class="pure-menu-link mf">{{item.name}}</a></li>
+    				</ul>
+  				<span class="pure-menu-heading mf"><b>Contacts</b><hr></span>
+				<address><a href="mailto:kayserg@gmail.com">kayserg@gmail.com</a></address>
+			</div>
+		</div>
+		<div m-if="cfg.length > 0" id="content">
+			<h3 class="mf">{{cfg[active].desc}}</h3>
+			<form class="pure-form pure-form-aligned">
+    		<fieldset>
+    			<div m-for="atab,index in cfg[active].options" class='pure-control-group'>
+    				<label for='{{atab.id}}'>{{atab.name}}</label>
+    				<input m-if="atab.type == 'input'" id='{{atab.id}}' type='text' m-model='cfg[active].options[index].value' m-literal:readonly='!formEditable'>
+    				<select m-if="atab.type == 'select'" id='{{atab.id}}' m-literal:readonly='!formEditable' m-model='cfg[active].options[index].value'>
+    					<option m-for='item in atab.options' value='{{item}}' m-literal:selected='item == atab.value'>{{item}}</option>
+    				</select>
+    			</div>
+        		<div class="pure-controls">
+					<button m-if="!formEditable" m-on:click="setFormEditable(true)" class="pure-button pure-button-primary" type="button">Edit</button>
+					<button m-if='formEditable' m-on:click="formCancel" class="pure-button pure-button-primary" type="button">Cancel</button>
+					<button m-if='formEditable' m-on:click="formConfirm" class="pure-button pure-button-primary" type="button">Confirm</button>
+        		</div>
+    		</fieldset>
+    		
+    		</form>
+             </div>
+		</div>
+	</div>
+</body>
+    <script src="js/ajax.min.js"></script>   
+    <script src="js/script.js"></script>    
+</html>
+
