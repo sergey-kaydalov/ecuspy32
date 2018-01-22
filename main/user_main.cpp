@@ -12,6 +12,7 @@ This is example code for the esphttpd library. It's a small-ish demo showing off
 the server, including WiFi connection management capabilities, some IO etc.
 */
 
+extern "C" {
 #include <libesphttpd/esp.h>
 #include "libesphttpd/httpd.h"
 #include "io.h"
@@ -25,7 +26,9 @@ the server, including WiFi connection management capabilities, some IO etc.
 #include "libesphttpd/webpages-espfs.h"
 #include "libesphttpd/cgiwebsocket.h"
 #include "cgi-test.h"
-
+}
+#include <iostream>
+#include "templates.hpp"
 #include "esp_wifi.h"
 
 #include "freertos/FreeRTOS.h"
@@ -43,6 +46,8 @@ the server, including WiFi connection management capabilities, some IO etc.
 
 
 #endif
+
+#include "config.hpp"
 
 #define TAG "user_main"
 
@@ -128,7 +133,7 @@ should be placed above the URLs they protect.
 */
 HttpdBuiltInUrl builtInUrls[]={
 	ROUTE_REDIRECT("/", "/index.html"),
-	ROUTE_CGI("/config.json", cgiGetConfigJson),
+	//ROUTE_CGI("/config.json", cgiGetConfigJson),
 #if 0
 	ROUTE_CGI_ARG("*", cgiRedirectApClientToHostname, "esp8266.nonet"),
 	ROUTE_REDIRECT("/", "/index.tpl"),
@@ -275,20 +280,48 @@ void ICACHE_FLASH_ATTR init_wifi(bool modeAP) {
 }
 #endif
 
-//Main routine. Initialize stdout, the I/O, filesystem and the webserver and we're done.
-#if ESP32
-void app_main(void) {
-#else
-void user_init(void) {
-#endif
+using namespace ecuspy;
 
-#ifndef ESP32
-	uart_div_modify(0, UART_CLK_FREQ / 115200);
-#endif
+const ConfigEntry Cfg3[] = {
+		ConfigEntry{"id1", "name1", "desc1", cfgCatWIFI, cfgTypeString, 10},
+		ConfigEntry{"id2", "name2Str", "desc2", cfgCatWIFI, cfgTypeString, 15},
+		ConfigEntry{"id3", "name3Int", "desc3", cfgCatWIFI, cfgTypeINT, 15}};
+
+//Main routine. Initialize stdout, the I/O, filesystem and the webserver and we're done.
+
+void CfgTest() {
+	try {
+	Config::instance().initialize(Cfg3, tpl::countof(Cfg3));
+	Config::instance().setValueStr(0, "abcd");
+	Config::instance().setValueStr(1, "1234");
+	int rc = getConfig<int>("id2");
+	std::cout << "RC=" << rc << std::endl;
+	{
+		Transaction tr;
+		Config::instance().setValueStr(0, "efgh");
+		Config::instance().setValueStr(1, "4321");
+		rc = getConfig<int>("id2");
+		std::cout << "RC2=" << rc << std::endl;
+	}
+	rc = getConfig<int>("id2");
+	std::cout << "RC3=" << rc << std::endl;
+	} catch(std::exception& e) {
+		std::cout << "Settings set exception" << std::endl;
+	}
+}
+
+extern "C" void app_main(void) {
+
+	try {
+		throw int(20);
+	} catch(int e) {
+		std::cout << "Caught " << e << std::endl;
+	}
 
 	ioInit();
-// FIXME: Re-enable this when capdns is fixed for esp32
-//	captdnsInit();
+
+	CfgTest();
+	//LocalConfig.get<int>(0);
 
 	espFsInit((void*)(webpages_espfs_start));
 
