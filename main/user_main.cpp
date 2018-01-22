@@ -285,7 +285,10 @@ using namespace ecuspy;
 const ConfigEntry Cfg3[] = {
 		ConfigEntry{"id1", "name1", "desc1", cfgCatWIFI, cfgTypeString, 10},
 		ConfigEntry{"id2", "name2Str", "desc2", cfgCatWIFI, cfgTypeString, 15},
-		ConfigEntry{"id3", "name3Int", "desc3", cfgCatWIFI, cfgTypeINT, 15}};
+		NumEntry<uint8_t>{"id3", "name3Int", "desc3", cfgCatWIFI, cfgTypeInt8, 3, 0, 200},
+		NumEntry<double>{"id4", "name4Double", "desc4", cfgCatWIFI, cfgTypeDouble, 10, 0.0, 10.1},
+		CustomValidatorEntry{"id5", "name5Double", "desc5", cfgCatWIFI, 15,
+			[](const ConfigEntry& e, const char* str) {return !strcmp(str, "kuku");}}};
 
 //Main routine. Initialize stdout, the I/O, filesystem and the webserver and we're done.
 
